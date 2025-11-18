@@ -39,7 +39,7 @@ Token-based authentication
 API documentation with drf-yasg (Swagger/OpenAPI)
 Filter, search, and pagination support
 Separate API endpoints for recipes, meal plans, and shopping lists
-🛠️ Tech Stack
+🛠️ Tech Stack\
 Backend: Django 5.0
 API: Django REST Framework
 Authentication: Django Allauth
