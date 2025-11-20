@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign Out - MealMate{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card border-0 shadow-lg scale-in" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-5 text-center">
+                        <!-- Icon -->
+                        <div class="mb-4">
+                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle pulse-slow" 
+                                 style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+                                <i class="fas fa-sign-out-alt fa-2x"></i>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="fw-bold mb-3">Sign Out</h3>
+                        <p class="text-muted mb-4">
+                            Are you sure you want to sign out? You'll need to sign in again to access your recipes and meal plans.
+                        </p>
+
+                        <!-- Form -->
+                        <form method="post" action="{% url 'account_logout' %}">
+                            {% csrf_token %}
+                            
+                            <div class="d-grid gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Yes, Sign Me Out
+                                </button>
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>No, Take Me Back
+                                </a>
+                            </div>
+                        </form>
+
+                        <!-- Quick Links -->
+                        <div class="mt-4 pt-4 border-top">
+                            <p class="text-muted small mb-2">Quick Links</p>
+                            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                                <a href="{% url 'recipes:recipe_list' %}" class="text-decoration-none small">
+                                    <i class="fas fa-book-open me-1"></i>Recipes
+                                </a>
+                                <a href="{% url 'mealplans:mealplan_list' %}" class="text-decoration-none small">
+                                    <i class="fas fa-calendar-alt me-1"></i>Meal Plans
+                                </a>
+                                <a href="{% url 'shopping:shoppinglist_list' %}" class="text-decoration-none small">
+                                    <i class="fas fa-shopping-cart me-1"></i>Shopping Lists
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="text-center mt-4 fade-in stagger-1">
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Your data is secure and will be here when you return
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-outline-secondary:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-300);
+        color: var(--text);
+    }
+</style>
+{% endblock %}

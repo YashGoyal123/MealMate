@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meal Plans - MealMate{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4"><i class="fas fa-calendar-alt me-3"></i>My Meal Plans</h1>
+            <p class="lead text-muted">Plan your weekly meals and stay organized</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'mealplans:mealplan_create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Create Meal Plan
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for mealplan in page_obj %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header {% if mealplan.is_current %}bg-success text-white{% else %}bg-primary text-white{% endif %}">
+                    <h5 class="mb-0">
+                        {{ mealplan.name }}
+                        {% if mealplan.is_current %}
+                        <span class="badge bg-warning text-dark float-end">Current</span>
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-calendar me-2"></i>
+                            {{ mealplan.start_date|date:"M d" }} - {{ mealplan.end_date|date:"M d, Y" }}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-utensils me-2"></i>
+                            {{ mealplan.meals.count }} meal{{ mealplan.meals.count|pluralize }}
+                        </p>
+                    </div>
+                    
+                    {% if mealplan.description %}
+                    <p class="card-text">{{ mealplan.description|truncatewords:20 }}</p>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'mealplans:mealplan_detail' mealplan.pk %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'mealplans:mealplan_update' mealplan.pk %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'mealplans:mealplan_delete' mealplan.pk %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-calendar-times fa-5x text-muted mb-4"></i>
+                    <h3>No Meal Plans Yet</h3>
+                    <p class="text-muted mb-4">Create your first meal plan to start organizing your weekly meals!</p>
+                    <a href="{% url 'mealplans:mealplan_create' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Create Your First Meal Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    Next <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

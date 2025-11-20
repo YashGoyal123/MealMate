@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify Email - MealMate{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card border-0 shadow-lg" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                 style="width: 80px; height: 80px;">
+                                <i class="fas fa-envelope-open-text fa-2x text-primary"></i>
+                            </div>
+                            <h3 class="fw-bold mb-2">Complete Your Signup</h3>
+                            <p class="text-muted mb-0">
+                                We sent a 6-digit verification code to<br>
+                                <strong>{{ email }}</strong>
+                            </p>
+                            <p class="text-muted small mt-2">
+                                Welcome, <strong>{{ username }}</strong>! 
+                            </p>
+                        </div>
+
+                        <!-- Messages -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- DEBUG: Show OTP in development mode -->
+                        {% if debug_otp %}
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <i class="fas fa-code me-2"></i>
+                                <strong>Development Mode:</strong> Your OTP is: <code class="fs-4 fw-bold">{{ debug_otp }}</code>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Expiry Warning -->
+                        {% if otp_obj.is_expired %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-clock me-2"></i>
+                                This OTP has expired. Please request a new one.
+                            </div>
+                        {% endif %}
+
+                        <!-- OTP Form -->
+                        <form method="post" id="otpForm">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="otp" class="form-label text-center d-block fw-semibold">
+                                    Enter Verification Code
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg text-center fw-bold" 
+                                       id="otp" 
+                                       name="otp" 
+                                       placeholder="000000"
+                                       maxlength="6"
+                                       pattern="[0-9]{6}"
+                                       inputmode="numeric"
+                                       autocomplete="off"
+                                       style="font-size: 2rem; letter-spacing: 0.5rem; font-family: 'Courier New', monospace;"
+                                       required
+                                       autofocus>
+                                <small class="form-text text-muted d-block text-center mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Enter the 6-digit code from your email
+                                </small>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-check-circle me-2"></i>Verify & Create Account
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Resend OTP -->
+                        <div class="text-center">
+                            <p class="text-muted small mb-2">Didn't receive the code?</p>
+                            <form method="post" action="{% url 'users:resend_signup_otp' otp_obj.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-decoration-none">
+                                    <i class="fas fa-paper-plane me-1"></i>Resend Code
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Divider -->
+                        <hr class="my-4">
+
+                        <!-- Back to Signup -->
+                        <div class="text-center">
+                            <a href="{% url 'account_signup' %}" class="text-muted text-decoration-none">
+                                <i class="fas fa-arrow-left me-1"></i>Start Over
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="card border-0 shadow-sm mt-3" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-shield-alt text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-semibold mb-1">Why verify your email?</h6>
+                                <p class="text-muted small mb-0">
+                                    Email verification ensures your account security and allows you to recover your account if needed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Remove spinner arrows from number input */
+    input[type="text"]#otp::-webkit-outer-spin-button,
+    input[type="text"]#otp::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type="text"]#otp {
+        -moz-appearance: textfield;
+    }
+    
+    /* Pulse animation for the icon */
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
+    .bg-primary.bg-opacity-10 {
+        animation: pulse 2s ease-in-out infinite;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const otpInput = document.getElementById('otp');
+        const otpForm = document.getElementById('otpForm');
+        
+        // Auto-format OTP input (numbers only)
+        otpInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+            e.target.value = value;
+            
+            // Auto-submit when 6 digits are entered
+            if (value.length === 6) {
+                otpForm.submit();
+            }
+        });
+        
+        // Handle paste event
+        otpInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanedData = pastedData.replace(/\D/g, '').substring(0, 6);
+            otpInput.value = cleanedData;
+            
+            // Auto-submit if 6 digits
+            if (cleanedData.length === 6) {
+                otpForm.submit();
+            }
+        });
+        
+        // Focus on input when page loads
+        otpInput.focus();
+    });
+</script>
+{% endblock %}

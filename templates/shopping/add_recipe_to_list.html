@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Add to Shopping List - MealMate{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-shopping-cart me-2"></i>Add to Shopping List
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Adding <strong>{{ recipe.ingredients.count }}</strong> ingredients from 
+                        <strong>"{{ recipe.title }}"</strong> to your shopping list.
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Choose Shopping List</label>
+                            
+                            {% if shopping_lists %}
+                            <div class="list-group mb-3">
+                                {% for list in shopping_lists %}
+                                <label class="list-group-item list-group-item-action">
+                                    <input type="radio" name="shopping_list_id" value="{{ list.pk }}" class="form-check-input me-2" {% if forloop.first %}checked{% endif %}>
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ list.name }}</h6>
+                                            <small class="text-muted">
+                                                <i class="fas fa-list me-1"></i>{{ list.items.count }} items
+                                                <i class="fas fa-calendar ms-2 me-1"></i>{{ list.created_at|date:"M d, Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <label class="list-group-item list-group-item-action border-success" style="border: 2px dashed;">
+                                <input type="radio" name="shopping_list_id" value="new" class="form-check-input me-2" {% if not shopping_lists %}checked{% endif %}>
+                                <div>
+                                    <h6 class="mb-1 text-success">
+                                        <i class="fas fa-plus-circle me-1"></i>Create New Shopping List
+                                    </h6>
+                                    <small class="text-muted">A new list will be created with ingredients from this recipe</small>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="alert alert-light border">
+                            <h6 class="mb-2"><i class="fas fa-list-ul me-2"></i>Ingredients to Add:</h6>
+                            <ul class="mb-0 small">
+                                {% for ingredient in recipe.ingredients.all|slice:":5" %}
+                                <li>{{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</li>
+                                {% endfor %}
+                                {% if recipe.ingredients.count > 5 %}
+                                <li class="text-muted">... and {{ recipe.ingredients.count|add:"-5" }} more</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-cart-plus me-2"></i>Add Ingredients
+                            </button>
+                            <a href="{% url 'recipes:recipe_detail' recipe.slug %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

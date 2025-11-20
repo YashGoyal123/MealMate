@@ -1,0 +1,821 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    /* Enhanced Hero Section Styling */
+    .hero-section h1 {
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .hero-section .lead {
+        font-weight: 400;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    /* Enhanced Button Styling */
+    .hero-section .btn-light {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    
+    .hero-section .btn-light::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .hero-section .btn-light:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .hero-section .btn-light:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    
+    .hero-section .btn-outline-light {
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        border-width: 2px;
+        position: relative;
+        transition: all 0.3s ease;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+    }
+    
+    .hero-section .btn-outline-light:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(255,255,255,0.15);
+        box-shadow: 0 8px 25px rgba(255,255,255,0.15);
+    }
+    
+    /* Animated Icon Pulse */
+    .hero-section .btn i {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .hero-section .btn:hover i {
+        transform: scale(1.2);
+    }
+    
+    /* Stats Cards Enhancement */
+    .hero-section .stats-card {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .hero-section .stats-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255,255,255,0.25);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    /* Dark mode fixes for home page */
+    [data-theme="dark"] .hero-section {
+        color: var(--text-color);
+    }
+    
+    [data-theme="dark"] .hero-section h1 {
+        color: #ffffff;
+        text-shadow: 0 2px 15px rgba(0,0,0,0.5);
+    }
+    
+    [data-theme="dark"] .hero-section .lead {
+        color: #e0e0e0;
+        text-shadow: 0 1px 5px rgba(0,0,0,0.3);
+    }
+    
+    [data-theme="dark"] .card h5,
+    [data-theme="dark"] .card h6 {
+        color: var(--text);
+    }
+    
+    [data-theme="dark"] section[style*="background: var(--gray-100)"] {
+        background: var(--bg-card) !important;
+    }
+    
+    [data-theme="dark"] .rounded-3[style*="background: white"] {
+        background: var(--bg-card) !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+    
+    [data-theme="dark"] .rounded-3 h4,
+    [data-theme="dark"] .rounded-3 p {
+        color: var(--text) !important;
+    }
+    
+    [data-theme="dark"] .bg-white {
+        background: var(--bg-card) !important;
+    }
+    
+    [data-theme="dark"] .bg-white h5,
+    [data-theme="dark"] .bg-white p {
+        color: var(--text) !important;
+    }
+    
+    /* Enhanced Hero Buttons in Dark Mode */
+    [data-theme="dark"] .hero-section .btn-light {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #ffffff;
+        border: none;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    [data-theme="dark"] .hero-section .btn-light:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+        color: #ffffff;
+    }
+    
+    [data-theme="dark"] .hero-section .btn-outline-light {
+        color: #ffffff;
+        border: 2px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+    }
+    
+    [data-theme="dark"] .hero-section .btn-outline-light:hover {
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.5);
+        color: #ffffff;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(255,255,255,0.2);
+    }
+    
+    /* Dark mode stats cards */
+    [data-theme="dark"] .hero-section .stats-card {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.15);
+    }
+    
+    [data-theme="dark"] .hero-section .stats-card:hover {
+        background: rgba(255,255,255,0.12);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    
+    [data-theme="dark"] .hero-section .stats-card h3,
+    [data-theme="dark"] .hero-section .stats-card p {
+        color: #ffffff;
+    }
+    
+    /* Feature Cards Enhancement */
+    .features-section {
+        background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        position: relative;
+    }
+    
+    .features-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.03) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    /* Light mode text styling */
+    .features-section .section-title {
+        color: #1a1a1a !important;
+        font-weight: 700;
+    }
+    
+    .features-section .text-muted {
+        color: #495057 !important;
+    }
+    
+    [data-theme="dark"] .features-section {
+        background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+    }
+    
+    [data-theme="dark"] .features-section::before {
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(116, 75, 162, 0.05) 0%, transparent 50%);
+    }
+    
+    /* Dark mode text styling */
+    [data-theme="dark"] .features-section .section-title {
+        color: #ffffff !important;
+        font-weight: 700;
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+    }
+    
+    [data-theme="dark"] .features-section .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    .feature-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0,0,0,0.06);
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Light Mode - Force Dark Text */
+    .feature-card h5,
+    .feature-card .fw-bold {
+        color: #1a1a1a !important;
+        font-weight: 700 !important;
+    }
+    
+    .feature-card p,
+    .feature-card .text-muted {
+        color: #333333 !important;
+    }
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .feature-card::after {
+        content: '';
+        position: absolute;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(78, 205, 196, 0.05) 100%);
+        transition: bottom 0.4s ease;
+        z-index: 0;
+    }
+    
+    .feature-card:hover::after {
+        bottom: 0;
+    }
+    
+    .feature-card .card-body {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+    }
+    
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .feature-icon {
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    [data-theme="dark"] .feature-card {
+        background: linear-gradient(135deg, rgba(45, 45, 45, 0.9) 0%, rgba(30, 30, 30, 0.9) 100%);
+        border-color: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Dark Mode - Force White Text */
+    [data-theme="dark"] .feature-card h5,
+    [data-theme="dark"] .feature-card .fw-bold {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    
+    [data-theme="dark"] .feature-card p,
+    [data-theme="dark"] .feature-card .text-muted {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    [data-theme="dark"] .feature-card::after {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(116, 75, 162, 0.08) 100%);
+    }
+    
+    [data-theme="dark"] .feature-card:hover {
+        background: linear-gradient(135deg, rgba(45, 45, 45, 1) 0%, rgba(35, 35, 35, 1) 100%);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+    
+    /* Built for home cooks section */
+    .home-cooks-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+    }
+    
+    .home-cooks-section h2,
+    .home-cooks-section h6 {
+        color: #1a1a1a !important;
+    }
+    
+    .home-cooks-section .text-muted,
+    .info-card .text-muted {
+        color: #555555 !important;
+    }
+    
+    .showcase-card h4 {
+        color: #1a1a1a !important;
+    }
+    
+    .showcase-card .text-muted {
+        color: #555555 !important;
+    }
+    
+    [data-theme="dark"] .home-cooks-section {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+    
+    [data-theme="dark"] .home-cooks-section h2,
+    [data-theme="dark"] .home-cooks-section h6 {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .home-cooks-section .text-muted,
+    [data-theme="dark"] .info-card .text-muted {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+    
+    [data-theme="dark"] .showcase-card {
+        background: linear-gradient(135deg, rgba(45, 45, 45, 0.9) 0%, rgba(30, 30, 30, 0.9) 100%) !important;
+    }
+    
+    [data-theme="dark"] .showcase-card h4 {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .showcase-card .text-muted {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+    
+    /* Section Headings */
+    .section-title {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        border-radius: 2px;
+    }
+    
+    /* Info Card Enhancement */
+    .info-card {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .info-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -100px;
+        width: 100px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transition: right 0.6s ease;
+    }
+    
+    .info-card:hover::after {
+        right: 100%;
+    }
+    
+    .info-card:hover {
+        transform: translateX(5px);
+    }
+    
+    .info-icon {
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover .info-icon {
+        transform: scale(1.1);
+    }
+    
+    [data-theme="dark"] .info-icon {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* CTA Section Enhancement */
+    .cta-section {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Light mode CTA - Dark text on gradient background */
+    .cta-section .col-md-8 h2 {
+        color: #1a1a1a !important;
+        text-shadow: none !important;
+        font-weight: 700 !important;
+    }
+    
+    .cta-section .col-md-8 p {
+        color: #2c3e50 !important;
+        text-shadow: none !important;
+    }
+    
+    /* CTA Buttons - Light Mode */
+    .cta-section .btn-light {
+        background: #1a1a1a !important;
+        color: #ffffff !important;
+        border: 2px solid #1a1a1a !important;
+        font-weight: 600 !important;
+    }
+    
+    .cta-section .btn-light:hover {
+        background: #000000 !important;
+        color: #ffffff !important;
+        border-color: #000000 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .cta-section .btn-outline-light {
+        background: #ffffff !important;
+        color: #1a1a1a !important;
+        border: 2px solid #1a1a1a !important;
+        font-weight: 600 !important;
+    }
+    
+    .cta-section .btn-outline-light:hover {
+        background: #f8f9fa !important;
+        color: #000000 !important;
+        border-color: #000000 !important;
+        transform: translateY(-2px);
+    }
+    
+    .cta-section .col-md-4.bg-white h5,
+    .cta-section .col-md-4.bg-white .fw-bold {
+        color: #1a1a1a !important;
+        font-weight: 700 !important;
+    }
+    
+    .cta-section .col-md-4.bg-white .text-muted {
+        color: #555555 !important;
+    }
+    
+    /* Dark mode CTA - White text on gradient */
+    [data-theme="dark"] .cta-section .col-md-8 h2,
+    [data-theme="dark"] .cta-section .col-md-8 p {
+        color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* CTA Buttons - Dark Mode */
+    [data-theme="dark"] .cta-section .btn-light {
+        background: #ffffff !important;
+        color: var(--primary) !important;
+    }
+    
+    [data-theme="dark"] .cta-section .btn-outline-light {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border: 2px solid #ffffff !important;
+    }
+    
+    [data-theme="dark"] .cta-section .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    [data-theme="dark"] .cta-section .col-md-4.bg-white {
+        background: #2d2d2d !important;
+    }
+    
+    [data-theme="dark"] .cta-section .col-md-4 h5,
+    [data-theme="dark"] .cta-section .col-md-4 .fw-bold {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    
+    [data-theme="dark"] .cta-section .col-md-4 .text-muted {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+    
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .cta-section::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -5%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-20px) scale(1.05); }
+    }
+    
+    .cta-section .btn {
+        position: relative;
+        z-index: 2;
+    }
+    
+    [data-theme="dark"] .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    /* Rating Stars Animation */
+    .rating-star {
+        display: inline-block;
+        animation: twinkle 2s ease-in-out infinite;
+    }
+    
+    .rating-star:nth-child(1) { animation-delay: 0s; }
+    .rating-star:nth-child(2) { animation-delay: 0.2s; }
+    .rating-star:nth-child(3) { animation-delay: 0.4s; }
+    .rating-star:nth-child(4) { animation-delay: 0.6s; }
+    .rating-star:nth-child(5) { animation-delay: 0.8s; }
+    
+    @keyframes twinkle {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+    }
+    
+    /* Showcase Card */
+    .showcase-card {
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .showcase-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255, 107, 107, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    
+    .showcase-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    [data-theme="dark"] .showcase-card {
+        background: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%) !important;
+    }
+    
+    [data-theme="dark"] .showcase-card::before {
+        background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+    }
+    
+    [data-theme="dark"] .showcase-card h4,
+    [data-theme="dark"] .showcase-card p {
+        color: var(--text-color) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section position-relative">
+    <div class="container text-center position-relative" style="z-index: 2;">
+        <div class="slide-up">
+            <h1 class="display-3 fw-bold mb-4">
+                Your Kitchen, Simplified
+            </h1>
+            <p class="lead mb-5 fs-5" style="max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.95;">
+                Discover recipes, plan meals, and manage your shopping—all in one place. 
+                Start cooking smarter today.
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mb-5">
+                {% if user.is_authenticated %}
+                <a href="{% url 'recipes:recipe_create' %}" class="btn btn-light btn-lg px-4 py-3">
+                    <i class="fas fa-plus-circle me-2"></i>New Recipe
+                </a>
+                <a href="{% url 'recipes:dashboard' %}" class="btn btn-outline-light btn-lg px-4 py-3">
+                    <i class="fas fa-th-large me-2"></i>Dashboard
+                </a>
+                {% else %}
+                <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg px-4 py-3 shadow">
+                    <i class="fas fa-arrow-right me-2"></i>Get Started
+                </a>
+                <a href="{% url 'recipes:recipe_list' %}" class="btn btn-outline-light btn-lg px-4 py-3">
+                    <i class="fas fa-compass me-2"></i>Browse Recipes
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Stats -->
+            <div class="row mt-5 g-3 justify-content-center">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card p-3 rounded">
+                        <h3 class="fw-bold mb-1">1,000+</h3>
+                        <p class="mb-0 small">Recipes</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card p-3 rounded">
+                        <h3 class="fw-bold mb-1">500+</h3>
+                        <p class="mb-0 small">Active Cooks</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card p-3 rounded">
+                        <h3 class="fw-bold mb-1">50+</h3>
+                        <p class="mb-0 small">Cuisines</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5 my-5">
+    <div class="container position-relative" style="z-index: 1;">
+        <div class="text-center mb-5">
+            <h2 class="section-title fw-bold mb-4" style="font-size: 2.5rem;">Everything you need</h2>
+            <p class="text-muted fs-5">Simple tools for better meal planning</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3 rounded-circle" 
+                             style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(230, 57, 70, 0.1), rgba(230, 57, 70, 0.2));">
+                            <i class="fas fa-book-open fs-3" style="color: var(--primary);"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Recipe Collection</h5>
+                        <p class="text-muted mb-0">
+                            Save and organize your favorite recipes. Add photos, ingredients, and cooking instructions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3 rounded-circle" 
+                             style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(42, 157, 143, 0.2));">
+                            <i class="fas fa-calendar-alt fs-3" style="color: var(--success);"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Meal Planning</h5>
+                        <p class="text-muted mb-0">
+                            Plan your week ahead. Organize breakfast, lunch, and dinner with our simple calendar.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon d-inline-flex align-items-center justify-content-center mb-3 rounded-circle" 
+                             style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(69, 123, 157, 0.1), rgba(69, 123, 157, 0.2));">
+                            <i class="fas fa-shopping-bag fs-3" style="color: var(--secondary);"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Shopping Lists</h5>
+                        <p class="text-muted mb-0">
+                            Auto-generate shopping lists from your meal plans. Check off items as you shop.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Additional Features -->
+<section class="home-cooks-section py-5 my-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4" style="font-size: 2.25rem;">Built for home cooks</h2>
+                <div class="d-flex flex-column gap-4">
+                    <div class="info-card d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="info-icon rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; background: #1a1a1a; color: white;">
+                                <i class="fas fa-search fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-2">Smart Search</h6>
+                            <p class="text-muted mb-0">Filter by cuisine, diet, ingredients, or cooking time</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-card d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="info-icon rounded d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; background: #1a1a1a; color: white;">
+                                <i class="fas fa-chart-pie fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-2">Dietary Options</h6>
+                            <p class="text-muted mb-0">Vegan, Keto, Paleo, Gluten-Free, and more</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="showcase-card rounded-3 p-5 text-center" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); box-shadow: var(--shadow-md);">
+                    <i class="fas fa-utensils mb-4" style="font-size: 5rem; color: var(--primary); opacity: 1;"></i>
+                    <h4 class="fw-bold mb-3" style="font-size: 1.75rem;">Clean & Simple</h4>
+                    <p class="text-muted mb-0 fs-5">Designed for real people, not robots</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 my-5">
+    <div class="container">
+        <div class="cta-section card border-0 shadow-lg overflow-hidden" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));">
+            <div class="row g-0">
+                <div class="col-md-8 text-white p-5">
+                    <h2 class="fw-bold mb-3" style="font-size: 2.25rem;">Start cooking better today</h2>
+                    <p class="mb-4 fs-5" style="opacity: 0.95;">Join hundreds of home cooks making meal planning simple</p>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% if not user.is_authenticated %}
+                        <a href="{% url 'account_signup' %}" class="btn btn-light btn-lg px-5 py-3">
+                            <i class="fas fa-arrow-right me-2"></i>Sign Up Free
+                        </a>
+                        <a href="{% url 'recipes:recipe_list' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                            Browse Recipes
+                        </a>
+                        {% else %}
+                        <a href="{% url 'recipes:recipe_create' %}" class="btn btn-light btn-lg px-5 py-3">
+                            <i class="fas fa-plus me-2"></i>New Recipe
+                        </a>
+                        <a href="{% url 'recipes:dashboard' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                            Dashboard
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4 bg-white d-flex align-items-center justify-content-center p-5">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-star rating-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                            <i class="fas fa-star rating-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                            <i class="fas fa-star rating-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                            <i class="fas fa-star rating-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                            <i class="fas fa-star rating-star" style="color: #fbbf24; font-size: 1.5rem;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2" style="font-size: 1.5rem;">5.0 Rating</h5>
+                        <p class="text-muted mb-0">500+ happy users</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

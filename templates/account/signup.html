@@ -1,0 +1,550 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account - MealMate{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center py-5 signup-page" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Left Side - Form -->
+            <div class="col-lg-5 col-md-8">
+                <div class="card border-0 shadow-lg scale-in" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-5">
+                        <!-- Logo -->
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold mb-2" style="color: var(--primary);">
+                                <i class="fas fa-utensils me-2"></i>MealMate
+                            </h3>
+                            <p class="text-muted mb-0">Create your free account</p>
+                        </div>
+
+                        <!-- Social Signup -->
+                        <div class="d-grid gap-2 mb-4">
+                            <button class="btn btn-outline-secondary btn-lg">
+                                <i class="fab fa-google me-2"></i>Sign up with Google
+                            </button>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="position-relative mb-4">
+                            <hr>
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                                or create with email
+                            </span>
+                        </div>
+
+                        <!-- Signup Form -->
+                        <form method="post" action="{% url 'account_signup' %}" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Username Input -->
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label">Username</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" 
+                                           class="form-control form-control-lg {% if form.username.errors %}is-invalid{% endif %}" 
+                                           id="id_username" 
+                                           name="username" 
+                                           placeholder="Choose a username"
+                                           required
+                                           autofocus>
+                                </div>
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.username.errors.0 }}
+                                    </div>
+                                {% else %}
+                                    <small class="form-text">Letters, digits and @/./+/-/_ only</small>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email Input -->
+                            <div class="mb-3">
+                                <label for="id_email" class="form-label">Email</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" 
+                                           class="form-control form-control-lg {% if form.email.errors %}is-invalid{% endif %}" 
+                                           id="id_email" 
+                                           name="email" 
+                                           placeholder="your@email.com"
+                                           required>
+                                </div>
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.email.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label">Password</label>
+                                <div class="input-icon password-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" 
+                                           class="form-control form-control-lg pe-5 {% if form.password1.errors %}is-invalid{% endif %}" 
+                                           id="id_password1" 
+                                           name="password1" 
+                                           placeholder="Create a strong password"
+                                           autocomplete="new-password"
+                                           required>
+                                    <button type="button" class="btn-password-toggle" onclick="togglePassword('id_password1', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password1.errors.0 }}
+                                    </div>
+                                {% else %}
+                                    <small class="form-text">At least 8 characters</small>
+                                {% endif %}
+                            </div>
+
+                            <!-- Confirm Password Input -->
+                            <div class="mb-3">
+                                <label for="id_password2" class="form-label">Confirm Password</label>
+                                <div class="input-icon password-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" 
+                                           class="form-control form-control-lg pe-5 {% if form.password2.errors %}is-invalid{% endif %}" 
+                                           id="id_password2" 
+                                           name="password2" 
+                                           placeholder="Confirm your password"
+                                           autocomplete="new-password"
+                                           required>
+                                    <button type="button" class="btn-password-toggle" onclick="togglePassword('id_password2', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password2.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Terms Checkbox -->
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label small" for="terms">
+                                    I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                                </label>
+                            </div>
+
+                            <!-- Error Messages -->
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ form.non_field_errors.0 }}
+                                </div>
+                            {% endif %}
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>Create Account
+                                </button>
+                            </div>
+
+                            <!-- Sign In Link -->
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    Already have an account? 
+                                    <a href="{% url 'account_login' %}" class="text-primary fw-bold text-decoration-none">
+                                        Sign in
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Back to Home -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'home' %}" class="text-muted text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Side - Benefits -->
+            <div class="col-lg-5 d-none d-lg-flex align-items-center">
+                <div class="slide-in-right">
+                    <h2 class="fw-bold mb-4">Start your culinary journey</h2>
+                    <p class="text-muted mb-4">Join MealMate and discover a smarter way to plan your meals</p>
+                    
+                    <div class="d-flex flex-column gap-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 56px; height: 56px; background: linear-gradient(135deg, #e63946, #d62828); color: white; box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);">
+                                    <i class="fas fa-infinity fs-5"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-1">Unlimited Recipes</h6>
+                                <p class="text-muted small mb-0">Create and save as many recipes as you want</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 56px; height: 56px; background: linear-gradient(135deg, #2a9d8f, #248d81); color: white; box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3);">
+                                    <i class="fas fa-chart-line fs-5"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-1">Nutrition Tracking</h6>
+                                <p class="text-muted small mb-0">Track calories and macros automatically</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 56px; height: 56px; background: linear-gradient(135deg, #457b9d, #1d3557); color: white; box-shadow: 0 4px 12px rgba(69, 123, 157, 0.3);">
+                                    <i class="fas fa-calendar-alt fs-5"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-1">Weekly Meal Plans</h6>
+                                <p class="text-muted small mb-0">Plan your entire week in minutes</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <div class="rounded d-flex align-items-center justify-content-center" 
+                                     style="width: 56px; height: 56px; background: linear-gradient(135deg, #f4a261, #e76f51); color: white; box-shadow: 0 4px 12px rgba(244, 162, 97, 0.3);">
+                                    <i class="fas fa-mobile-alt fs-5"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="fw-bold mb-1">Mobile Friendly</h6>
+                                <p class="text-muted small mb-0">Access from any device, anywhere</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="mt-5 p-4 rounded" style="background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.1);">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h4 class="fw-bold mb-0" style="color: var(--primary);">500+</h4>
+                                <small class="text-muted">Users</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 class="fw-bold mb-0" style="color: var(--success);">1000+</h4>
+                                <small class="text-muted">Recipes</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 class="fw-bold mb-0" style="color: var(--secondary);">50+</h4>
+                                <small class="text-muted">Cuisines</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .input-icon {
+        position: relative;
+    }
+    
+    .input-icon i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-600);
+        z-index: 1;
+    }
+    
+    .input-icon .form-control {
+        padding-left: 46px;
+    }
+    
+    .password-wrapper {
+        position: relative;
+    }
+    
+    .password-wrapper .form-control {
+        padding-left: 46px !important;
+        padding-right: 45px !important;
+    }
+    
+    /* Hide browser native password reveal buttons */
+    .password-wrapper input[type="password"]::-ms-reveal,
+    .password-wrapper input[type="password"]::-ms-clear,
+    .password-wrapper input[type="text"]::-ms-reveal,
+    .password-wrapper input[type="text"]::-ms-clear {
+        display: none;
+    }
+    
+    .password-wrapper input[type="password"]::-webkit-credentials-auto-fill-button,
+    .password-wrapper input[type="password"]::-webkit-caps-lock-indicator,
+    .password-wrapper input[type="text"]::-webkit-credentials-auto-fill-button {
+        display: none !important;
+        visibility: hidden;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+    }
+    
+    /* Hide default validation icon for password fields */
+    .password-wrapper .form-control.is-invalid {
+        background-image: none;
+        padding-right: 45px !important;
+    }
+    
+    .btn-password-toggle {
+        position: absolute;
+        right: 25px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 8px;
+        font-size: 1.1rem;
+        line-height: 1;
+        transition: all 0.2s ease;
+        z-index: 5;
+    }
+    
+    /* Remove error state adjustment since we're hiding the default icon */
+    .is-invalid ~ .btn-password-toggle {
+        right: 25px;
+    }
+    
+    .btn-password-toggle:hover {
+        color: var(--primary);
+    }
+    
+    .btn-password-toggle:focus {
+        outline: none;
+        color: var(--primary);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-300);
+        color: var(--text);
+    }
+    
+    /* Light Mode - Force Dark Text on Right Side */
+    .slide-in-right h2 {
+        color: #000000 !important;
+        font-weight: 700 !important;
+    }
+    
+    .slide-in-right p {
+        color: #2c3e50 !important;
+    }
+    
+    .slide-in-right .text-muted {
+        color: #2c3e50 !important;
+    }
+    
+    .slide-in-right h6 {
+        color: #000000 !important;
+        font-weight: 700 !important;
+    }
+    
+    .slide-in-right h4 {
+        opacity: 1 !important;
+        font-weight: 700 !important;
+    }
+    
+    .slide-in-right small {
+        color: #495057 !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Dark Mode - Force White Text */
+    [data-theme="dark"] .slide-in-right h2 {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .slide-in-right p {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    [data-theme="dark"] .slide-in-right .text-muted {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+    
+    [data-theme="dark"] .slide-in-right h6 {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .slide-in-right small {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    /* Dark Mode - Black Background */
+    [data-theme="dark"] .signup-page {
+        background: #000000 !important;
+    }
+    
+    /* Dark Mode - Card Styling */
+    [data-theme="dark"] .card {
+        background: #1a1a1a !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Dark Mode - Card Header Text */
+    [data-theme="dark"] .card-body h3 {
+        color: #ffffff !important;
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+    }
+    
+    [data-theme="dark"] .card-body .text-muted {
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
+    
+    /* Dark Mode - Google Button */
+    [data-theme="dark"] .btn-outline-secondary {
+        background: #2d2d2d !important;
+        border: 2px solid #404040 !important;
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    
+    [data-theme="dark"] .btn-outline-secondary:hover {
+        background: #3d3d3d !important;
+        border-color: #505050 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Dark Mode - Divider */
+    [data-theme="dark"] hr {
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        opacity: 1;
+    }
+    
+    [data-theme="dark"] .translate-middle {
+        background: #1a1a1a !important;
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    /* Dark Mode - Form Labels */
+    [data-theme="dark"] .form-label {
+        color: #ffffff !important;
+        font-weight: 500;
+    }
+    
+    /* Dark Mode - Form Inputs */
+    [data-theme="dark"] .form-control {
+        background: #2d2d2d !important;
+        border: 1px solid #404040 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .form-control:focus {
+        background: #2d2d2d !important;
+        border-color: #7c9bff !important;
+        box-shadow: 0 0 0 0.2rem rgba(124, 155, 255, 0.25) !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    /* Dark Mode - Form Text */
+    [data-theme="dark"] .form-text,
+    [data-theme="dark"] small {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    /* Dark Mode - Form Check Label */
+    [data-theme="dark"] .form-check-label {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    /* Dark Mode - Checkbox */
+    [data-theme="dark"] .form-check-input {
+        background-color: #2d2d2d !important;
+        border-color: #404040 !important;
+    }
+    
+    [data-theme="dark"] .form-check-input:checked {
+        background-color: #7c9bff !important;
+        border-color: #7c9bff !important;
+    }
+    
+    /* Dark Mode - Sign In Text */
+    [data-theme="dark"] .text-center p {
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
+    
+    [data-theme="dark"] .text-center .fw-bold {
+        color: #7c9bff !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Dark Mode - Links */
+    [data-theme="dark"] a {
+        color: #7c9bff !important;
+        transition: all 0.3s ease;
+    }
+    
+    [data-theme="dark"] a:hover {
+        color: #a4bdff !important;
+        text-decoration: none;
+    }
+    
+    /* Dark Mode - Trust Indicators Box */
+    [data-theme="dark"] .slide-in-right .rounded {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Dark Mode - Back to Home Link */
+    [data-theme="dark"] .text-center a {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    [data-theme="dark"] .text-center a:hover {
+        color: #ffffff !important;
+    }
+    
+    /* Dark Mode - Password Toggle Button */
+    [data-theme="dark"] .btn-password-toggle {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    [data-theme="dark"] .btn-password-toggle:hover,
+    [data-theme="dark"] .btn-password-toggle:focus {
+        color: #7c9bff !important;
+    }
+</style>
+
+<script>
+function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

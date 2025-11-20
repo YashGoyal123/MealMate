@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Shopping Lists - MealMate{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold mb-2">🛒 Shopping Lists</h1>
+            <p class="text-muted">Manage your grocery shopping efficiently</p>
+        </div>
+        <a href="{% url 'shopping:shoppinglist_create' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>New List
+        </a>
+    </div>
+
+    {% if shopping_lists or shared_shopping_lists %}
+        <!-- My Shopping Lists -->
+        {% if shopping_lists %}
+        <div class="mb-5">
+            <h3 class="mb-3">
+                <i class="fas fa-list me-2"></i>My Shopping Lists
+            </h3>
+            <div class="row g-4">
+                {% for shopping_list in shopping_lists %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 hover-card">
+                    <div class="card-body">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="card-title mb-0 fw-bold">
+                                    <a href="{% url 'shopping:shoppinglist_detail' shopping_list.pk %}" 
+                                       class="text-decoration-none text-dark stretched-link">
+                                        {{ shopping_list.name }}
+                                    </a>
+                                </h5>
+                                {% if shopping_list.user != user %}
+                                <small class="text-muted">
+                                    <i class="fas fa-share-alt me-1"></i>Shared by {{ shopping_list.user.username }}
+                                </small>
+                                {% elif shopping_list.shared_with.all %}
+                                <small class="text-primary">
+                                    <i class="fas fa-users me-1"></i>Shared with {{ shopping_list.shared_with.count }} user{{ shopping_list.shared_with.count|pluralize }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            {% if shopping_list.is_completed %}
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="fas fa-check-circle me-1"></i>Completed
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning">
+                                    <i class="fas fa-clock me-1"></i>In Progress
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="mb-3"></div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Progress</small>
+                                <small class="fw-semibold text-primary">
+                                    {{ shopping_list.completed_items }} / {{ shopping_list.total_items }} items
+                                </small>
+                            </div>
+                            <div class="progress" style="height: 10px; background-color: #e9ecef;">
+                                <div class="progress-bar" 
+                                     role="progressbar" 
+                                     style="--completion: {{ shopping_list.completion_percentage }};"
+                                     aria-valuenow="{{ shopping_list.completion_percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Meal Plan Link -->
+                        {% if shopping_list.meal_plan %}
+                        <div class="mb-3 p-2 bg-light rounded">
+                            <small class="text-muted d-block mb-1">
+                                <i class="fas fa-calendar-alt me-1"></i>Linked to:
+                            </small>
+                            <a href="{% url 'mealplans:mealplan_detail' shopping_list.meal_plan.pk %}" 
+                               class="small fw-semibold text-decoration-none position-relative" 
+                               style="z-index: 10;">
+                                {{ shopping_list.meal_plan.name }}
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <!-- Notes Preview -->
+                        {% if shopping_list.notes %}
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fas fa-sticky-note me-1"></i>
+                            {{ shopping_list.notes|truncatewords:15 }}
+                        </p>
+                        {% endif %}
+
+                        <!-- Meta Information -->
+                        <div class="d-flex justify-content-between align-items-center text-muted small">
+                            <span>
+                                <i class="far fa-calendar me-1"></i>
+                                {{ shopping_list.created_at|date:"M d, Y" }}
+                            </span>
+                            <span>
+                                <i class="far fa-clock me-1"></i>
+                                {{ shopping_list.updated_at|timesince }} ago
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer with Actions -->
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'shopping:shoppinglist_detail' shopping_list.pk %}" 
+                               class="btn btn-sm btn-outline-primary flex-fill position-relative" 
+                               style="z-index: 10;">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                            <a href="{% url 'shopping:shoppinglist_update' shopping_list.pk %}" 
+                               class="btn btn-sm btn-outline-secondary position-relative" 
+                               style="z-index: 10;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'shopping:shoppinglist_delete' shopping_list.pk %}" 
+                               class="btn btn-sm btn-outline-danger position-relative" 
+                               style="z-index: 10;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Shared with Me -->
+        {% if shared_shopping_lists %}
+        <div class="mb-5">
+            <h3 class="mb-3">
+                <i class="fas fa-share-alt me-2"></i>Shared with Me
+            </h3>
+            <div class="row g-4">
+                {% for shopping_list in shared_shopping_lists %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 hover-card border-primary">
+                        <div class="card-body">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="card-title mb-0 fw-bold">
+                                        <a href="{% url 'shopping:shoppinglist_detail' shopping_list.pk %}" 
+                                           class="text-decoration-none text-dark stretched-link">
+                                            {{ shopping_list.name }}
+                                        </a>
+                                    </h5>
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>by {{ shopping_list.user.username }}
+                                    </small>
+                                </div>
+                                {% if shopping_list.is_completed %}
+                                    <span class="badge bg-success-subtle text-success">
+                                        <i class="fas fa-check-circle me-1"></i>Completed
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning">
+                                        <i class="fas fa-clock me-1"></i>In Progress
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="mb-3"></div>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">Progress</small>
+                                    <small class="fw-semibold text-primary">
+                                        {{ shopping_list.completed_items }} / {{ shopping_list.total_items }} items
+                                    </small>
+                                </div>
+                                <div class="progress" style="height: 10px; background-color: #e9ecef;">
+                                    <div class="progress-bar" 
+                                         role="progressbar" 
+                                         style="--completion: {{ shopping_list.completion_percentage }};"
+                                         aria-valuenow="{{ shopping_list.completion_percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Meal Plan Link -->
+                            {% if shopping_list.meal_plan %}
+                            <div class="mb-3 p-2 bg-light rounded">
+                                <small class="text-muted d-block mb-1">
+                                    <i class="fas fa-calendar-alt me-1"></i>Linked to:
+                                </small>
+                                <a href="{% url 'mealplans:mealplan_detail' shopping_list.meal_plan.pk %}" 
+                                   class="small fw-semibold text-decoration-none position-relative" 
+                                   style="z-index: 10;">
+                                    {{ shopping_list.meal_plan.name }}
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            <!-- Notes Preview -->
+                            {% if shopping_list.notes %}
+                            <p class="card-text text-muted small mb-3">
+                                <i class="fas fa-sticky-note me-1"></i>
+                                {{ shopping_list.notes|truncatewords:15 }}
+                            </p>
+                            {% endif %}
+
+                            <!-- Meta Information -->
+                            <div class="d-flex justify-content-between align-items-center text-muted small">
+                                <span>
+                                    <i class="far fa-calendar me-1"></i>
+                                    {{ shopping_list.created_at|date:"M d, Y" }}
+                                </span>
+                                <span>
+                                    <i class="far fa-clock me-1"></i>
+                                    {{ shopping_list.updated_at|timesince }} ago
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Footer with Actions -->
+                        <div class="card-footer bg-transparent border-top-0">
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'shopping:shoppinglist_detail' shopping_list.pk %}" 
+                                   class="btn btn-sm btn-outline-primary flex-fill position-relative" 
+                                   style="z-index: 10;">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                <form method="post" action="{% url 'shopping:leave_list' shopping_list.pk %}" 
+                                      class="position-relative" style="z-index: 10;" 
+                                      onsubmit="return confirm('Remove this list from your account?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-times me-1"></i>Remove
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <nav aria-label="Shopping lists pagination" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">
+                            <i class="fas fa-angles-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                            <i class="fas fa-angles-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+    {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-shopping-cart" style="font-size: 5rem; color: var(--secondary-color); opacity: 0.3;"></i>
+            </div>
+            <h3 class="text-muted mb-3">No Shopping Lists Yet</h3>
+            <p class="text-muted mb-4">Create your first shopping list to start organizing your groceries!</p>
+            <a href="{% url 'shopping:shoppinglist_create' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus me-2"></i>Create Your First List
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    {% if shopping_lists or shared_shopping_lists %}
+    <div class="row g-3 mt-5">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="fw-bold text-primary mb-0">{{ shopping_lists|length }}</h3>
+                    <p class="text-muted small mb-0">My Lists</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="fw-bold text-info mb-0">{{ shared_shopping_lists|length }}</h3>
+                    <p class="text-muted small mb-0">Shared with Me</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="fw-bold text-success mb-0">
+                        {% widthratio shopping_lists|length 1 shopping_lists|length %}
+                    </h3>
+                    <p class="text-muted small mb-0">Total Items</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="fw-bold text-warning mb-0">
+                        {% for list in shopping_lists %}
+                            {% if list.is_completed %}1{% endif %}
+                        {% endfor %}
+                    </h3>
+                    <p class="text-muted small mb-0">Completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12) !important;
+    }
+
+    .hover-card.border-primary {
+        border: 2px solid rgba(13, 110, 253, 0.3) !important;
+    }
+
+    .hover-card.border-primary:hover {
+        border-color: rgba(13, 110, 253, 0.6) !important;
+    }
+
+    /* Use a CSS variable for the completion percentage to avoid inline "%" in templates */
+    .progress-bar {
+        width: calc(var(--completion) * 1%);
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+        transition: width 0.3s ease;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In - MealMate{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Left Side - Illustration/Info -->
+            <div class="col-lg-5 d-none d-lg-flex align-items-center">
+                <div class="slide-in-left">
+                    <div class="text-center mb-4">
+                        <div class="d-inline-block p-4 rounded-circle mb-4" style="background: var(--primary); animation: pulse 2s infinite;">
+                            <i class="fas fa-utensils fa-4x text-white"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-3">Welcome back!</h2>
+                    <p class="text-muted mb-4">Sign in to access your recipes, meal plans, and shopping lists.</p>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 44px; height: 44px; background: rgba(230, 57, 70, 0.1);">
+                                    <i class="fas fa-book-open" style="color: var(--primary);"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 fw-bold">Your Recipe Collection</h6>
+                                <small class="text-muted">Access all your saved recipes</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 44px; height: 44px; background: rgba(42, 157, 143, 0.1);">
+                                    <i class="fas fa-calendar-check" style="color: var(--success);"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 fw-bold">Meal Planning</h6>
+                                <small class="text-muted">Organize your weekly meals</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 44px; height: 44px; background: rgba(69, 123, 157, 0.1);">
+                                    <i class="fas fa-list-check" style="color: var(--secondary);"></i>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-0 fw-bold">Smart Lists</h6>
+                                <small class="text-muted">Generate shopping lists instantly</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="col-lg-5 col-md-8">
+                <div class="card border-0 shadow-lg scale-in" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-5">
+                        <!-- Logo -->
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold mb-2" style="color: var(--primary);">
+                                <i class="fas fa-utensils me-2"></i>MealMate
+                            </h3>
+                            <p class="text-muted mb-0">Sign in to your account</p>
+                        </div>
+
+                        <!-- Social Login -->
+                        <div class="d-grid gap-2 mb-4">
+                            <button class="btn btn-outline-secondary btn-lg" type="button" disabled>
+                                <i class="fab fa-google me-2"></i>Continue with Google (Coming Soon)
+                            </button>
+                        </div>
+
+                        <!-- Demo Account Login -->
+                        <div class="alert alert-info border-0 shadow-sm mb-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    <strong>Try Demo Account</strong>
+                                    <p class="mb-0 small mt-1">
+                                        Username: <code>demo</code> | Password: <code>demo123</code>
+                                    </p>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="fillDemoCredentials()">
+                                    <i class="fas fa-bolt me-1"></i>Quick Login
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="position-relative mb-4">
+                            <hr>
+                            <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
+                                or sign in with email
+                            </span>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form method="post" action="{% url 'account_login' %}" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- Email Input -->
+                            <div class="mb-3">
+                                <label for="id_login" class="form-label">Email or Username</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="text" 
+                                           class="form-control form-control-lg {% if form.login.errors %}is-invalid{% endif %}" 
+                                           id="id_login" 
+                                           name="login" 
+                                           placeholder="Enter your email"
+                                           required
+                                           autofocus>
+                                </div>
+                                {% if form.login.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.login.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="mb-3">
+                                <label for="id_password" class="form-label">Password</label>
+                                <div class="input-icon password-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" 
+                                           class="form-control form-control-lg pe-5 {% if form.password.errors %}is-invalid{% endif %}" 
+                                           id="id_password" 
+                                           name="password" 
+                                           placeholder="Enter your password"
+                                           autocomplete="current-password"
+                                           required>
+                                    <button type="button" class="btn-password-toggle" onclick="togglePassword('id_password', this)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.password.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="remember" id="id_remember">
+                                    <label class="form-check-label" for="id_remember">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{% url 'account_reset_password' %}" class="text-primary text-decoration-none small">
+                                    Forgot password?
+                                </a>
+                            </div>
+
+                            <!-- Error Messages -->
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ form.non_field_errors.0 }}
+                                </div>
+                            {% endif %}
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                </button>
+                            </div>
+
+                            <!-- Sign Up Link -->
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    Don't have an account? 
+                                    <a href="{% url 'account_signup' %}" class="text-primary fw-bold text-decoration-none">
+                                        Create one
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Back to Home -->
+                <div class="text-center mt-4">
+                    <a href="{% url 'home' %}" class="text-muted text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .input-icon {
+        position: relative;
+    }
+    
+    .input-icon i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gray-600);
+        z-index: 1;
+    }
+    
+    .input-icon .form-control {
+        padding-left: 46px;
+    }
+    
+    .password-wrapper {
+        position: relative;
+    }
+    
+    .password-wrapper .form-control {
+        padding-left: 46px !important;
+        padding-right: 45px !important;
+    }
+    
+    /* Hide browser native password reveal buttons */
+    .password-wrapper input[type="password"]::-ms-reveal,
+    .password-wrapper input[type="password"]::-ms-clear,
+    .password-wrapper input[type="text"]::-ms-reveal,
+    .password-wrapper input[type="text"]::-ms-clear {
+        display: none;
+    }
+    
+    .password-wrapper input[type="password"]::-webkit-credentials-auto-fill-button,
+    .password-wrapper input[type="password"]::-webkit-caps-lock-indicator,
+    .password-wrapper input[type="text"]::-webkit-credentials-auto-fill-button {
+        display: none !important;
+        visibility: hidden;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+    }
+    
+    /* Hide default validation icon for password fields */
+    .password-wrapper .form-control.is-invalid {
+        background-image: none;
+        padding-right: 45px !important;
+    }
+    
+    .btn-password-toggle {
+        position: absolute;
+        right: 25px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 8px;
+        font-size: 1.1rem;
+        line-height: 1;
+        transition: all 0.2s ease;
+        z-index: 5;
+    }
+    
+    /* Remove error state adjustment since we're hiding the default icon */
+    .is-invalid ~ .btn-password-toggle {
+        right: 25px;
+    }
+    
+    .btn-password-toggle:hover {
+        color: var(--primary);
+    }
+    
+    .btn-password-toggle:focus {
+        outline: none;
+        color: var(--primary);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-300);
+        color: var(--text);
+    }
+
+    .demo-credentials code {
+        background: rgba(230, 57, 70, 0.1);
+        color: var(--primary);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    /* Dark Mode - Password Toggle Button */
+    [data-theme="dark"] .btn-password-toggle {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    [data-theme="dark"] .btn-password-toggle:hover,
+    [data-theme="dark"] .btn-password-toggle:focus {
+        color: #7c9bff !important;
+    }
+</style>
+
+<script>
+function fillDemoCredentials() {
+    document.getElementById('id_login').value = 'demo';
+    document.getElementById('id_password').value = 'demo123';
+    
+    // Optional: auto-submit the form
+    // document.querySelector('form').submit();
+    
+    // Visual feedback
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check me-1"></i>Filled!';
+    button.classList.add('btn-success');
+    button.classList.remove('btn-primary');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.classList.remove('btn-success');
+        button.classList.add('btn-primary');
+    }, 2000);
+}
+
+function togglePassword(inputId, button) {
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

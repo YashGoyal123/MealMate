@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ shopping_list.name }} - MealMate{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="{% url 'shopping:shoppinglist_list' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Lists
+        </a>
+    </div>
+
+    <!-- Header -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h1 class="display-6 fw-bold mb-2">{{ shopping_list.name }}</h1>
+                    {% if shopping_list.meal_plan %}
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-calendar-alt me-1"></i>
+                        Linked to: <a href="{% url 'mealplans:mealplan_detail' shopping_list.meal_plan.pk %}">
+                            {{ shopping_list.meal_plan.name }}
+                        </a>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="d-flex gap-2">
+                    {% if shopping_list.user == user %}
+                    <a href="{% url 'shopping:shoppinglist_update' shopping_list.pk %}" 
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                    {% endif %}
+                    {% if shopping_list.user == user %}
+                    <a href="{% url 'shopping:shoppinglist_delete' shopping_list.pk %}" 
+                       class="btn btn-outline-danger">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </a>
+                    {% else %}
+                    <form method="post" action="{% url 'shopping:leave_list' shopping_list.pk %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove this list from your account?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-1"></i>Remove
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold">Shopping Progress</span>
+                    <span class="text-primary fw-bold">
+                        {{ shopping_list.completed_items }} / {{ shopping_list.total_items }} items
+                    </span>
+                </div>
+                <div class="progress" style="height: 12px; background-color: #e9ecef;">
+                    <div class="progress-bar" 
+                         role="progressbar" 
+                         style="width: {{ shopping_list.completion_percentage }}%; background: linear-gradient(90deg, #ff6b6b, #4ecdc4);">
+                        {{ shopping_list.completion_percentage }}%
+                    </div>
+                </div>
+            </div>
+
+            {% if shopping_list.notes %}
+            <div class="alert alert-info">
+                <i class="fas fa-sticky-note me-2"></i>
+                {{ shopping_list.notes }}
+            </div>
+            {% endif %}
+            
+            <!-- Sharing Section (only for owner) -->
+            {% if shopping_list.user == user %}
+            <div class="mt-3">
+                <h6 class="fw-bold mb-2"><i class="fas fa-share-alt me-2"></i>Share this list</h6>
+                <form method="post" action="{% url 'shopping:share_list' shopping_list.pk %}" class="mb-3">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="text" name="username" class="form-control" placeholder="Enter username to share with" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-1"></i>Share
+                        </button>
+                    </div>
+                </form>
+                
+                {% if shopping_list.shared_with.all %}
+                <div class="mb-2">
+                    <small class="text-muted fw-semibold">Shared with:</small>
+                    {% for shared_user in shopping_list.shared_with.all %}
+                    <div class="d-inline-flex align-items-center bg-light rounded px-2 py-1 me-2 mb-1">
+                        <i class="fas fa-user me-1 text-primary"></i>
+                        <span class="me-2">{{ shared_user.username }}</span>
+                        <form method="post" action="{% url 'shopping:unshare_list' shopping_list.pk shared_user.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-link p-0 text-danger" title="Remove access">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <!-- Show who shared this list -->
+            <div class="alert alert-info border-info">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <i class="fas fa-share-alt me-2"></i>
+                        This list is shared with you by <strong>{{ shopping_list.user.username }}</strong>
+                    </div>
+                    <span class="badge bg-info">View Only</span>
+                </div>
+                <small class="d-block mt-2 mb-0">
+                    <i class="fas fa-info-circle me-1"></i>
+                    You can view and check off items, but cannot edit or delete the list.
+                </small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add Item Button -->
+    <div class="mb-4">
+        <a href="{% url 'shopping:item_create' shopping_list.pk %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Item
+        </a>
+    </div>
+
+    <!-- Items by Category -->
+    {% if items_by_category %}
+        {% for category, items in items_by_category.items %}
+        <div class="card mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fas fa-tag me-2 text-primary"></i>{{ category }}
+                </h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for item in items %}
+                <div class="list-group-item {% if item.is_purchased %}bg-light text-muted{% endif %}">
+                    <div class="d-flex align-items-center">
+                        <!-- Checkbox -->
+                        <form method="post" action="{% url 'shopping:toggle_item_purchased' item.pk %}" class="me-3">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link p-0 text-decoration-none" 
+                                    style="font-size: 1.5rem;">
+                                {% if item.is_purchased %}
+                                    <i class="fas fa-check-circle text-success"></i>
+                                {% else %}
+                                    <i class="far fa-circle text-secondary"></i>
+                                {% endif %}
+                            </button>
+                        </form>
+
+                        <!-- Item Details -->
+                        <div class="flex-grow-1 {% if item.is_purchased %}text-decoration-line-through{% endif %}">
+                            <div class="d-flex align-items-center">
+                                {% if item.is_priority %}
+                                    <i class="fas fa-star text-warning me-2"></i>
+                                {% endif %}
+                                <strong>{{ item.name }}</strong>
+                                <span class="ms-2 text-muted">- {{ item.quantity }}</span>
+                            </div>
+                            {% if item.notes %}
+                            <small class="text-muted">
+                                <i class="fas fa-comment me-1"></i>{{ item.notes }}
+                            </small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'shopping:item_update' item.pk %}" 
+                               class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'shopping:item_delete' item.pk %}" 
+                               class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-basket" style="font-size: 4rem; color: var(--secondary-color); opacity: 0.3;"></i>
+            <h4 class="text-muted mt-3">No items yet</h4>
+            <p class="text-muted">Add items to your shopping list to get started!</p>
+            <a href="{% url 'shopping:item_create' shopping_list.pk %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add First Item
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .list-group-item {
+        transition: all 0.2s ease;
+        background: var(--bg-card);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+    
+    .list-group-item:hover {
+        background-color: var(--light-gray);
+    }
+    
+    /* Dark mode fixes */
+    [data-theme="dark"] .card-header.bg-white {
+        background: var(--bg-card) !important;
+    }
+    
+    [data-theme="dark"] .list-group-item.bg-light {
+        background: var(--light-gray) !important;
+    }
+    
+    [data-theme="dark"] .progress {
+        background: var(--light-gray);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verify OTP - MealMate{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+                <div class="card border-0 shadow-lg scale-in" style="border-radius: var(--radius-lg);">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="fas fa-shield-alt fa-4x text-success"></i>
+                            </div>
+                            <h3 class="fw-bold mb-2">Verify Your Email</h3>
+                            <p class="text-muted mb-0">
+                                We've sent a 6-digit code to<br>
+                                <strong>{{ email }}</strong>
+                            </p>
+                        </div>
+
+                        <!-- DEBUG: Show OTP in development mode -->
+                        {% if debug_otp %}
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <i class="fas fa-code me-2"></i>
+                                <strong>Development Mode:</strong> Your OTP is: <code class="fs-4 fw-bold">{{ debug_otp }}</code>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- OTP Expiry Info -->
+                        {% if not otp_obj.is_expired %}
+                        <div class="alert alert-info border-0 mb-4">
+                            <i class="fas fa-clock me-2"></i>
+                            <small>This OTP will expire in 10 minutes</small>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-danger border-0 mb-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <small>This OTP has expired. Please request a new one.</small>
+                        </div>
+                        {% endif %}
+
+                        <!-- Form -->
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            
+                            <!-- OTP Input -->
+                            <div class="mb-4">
+                                <label for="otp" class="form-label">Enter OTP</label>
+                                <input type="text" 
+                                       class="form-control form-control-lg text-center" 
+                                       id="otp" 
+                                       name="otp" 
+                                       placeholder="000000"
+                                       maxlength="6"
+                                       pattern="[0-9]{6}"
+                                       style="letter-spacing: 0.5rem; font-size: 1.5rem; font-weight: 600;"
+                                       required
+                                       autofocus
+                                       {% if otp_obj.is_expired %}disabled{% endif %}>
+                                <small class="form-text text-muted">Enter the 6-digit code</small>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-success btn-lg" {% if otp_obj.is_expired %}disabled{% endif %}>
+                                    <i class="fas fa-check-circle me-2"></i>Verify Email
+                                </button>
+                            </div>
+
+                            <!-- Resend OTP -->
+                            <div class="text-center mb-3">
+                                <form method="post" action="{% url 'users:resend_otp' otp_obj.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link text-decoration-none">
+                                        <i class="fas fa-redo me-1"></i>Didn't receive? Resend OTP
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Back Link -->
+                            <div class="text-center">
+                                <a href="{% url 'users:send_otp' %}" class="text-decoration-none text-muted">
+                                    <i class="fas fa-arrow-left me-1"></i>Use different email
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Auto-focus effect */
+    #otp:focus {
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        border-color: #198754;
+    }
+    
+    /* Number input styling */
+    #otp[type="text"] {
+        -moz-appearance: textfield;
+    }
+    
+    #otp::-webkit-inner-spin-button,
+    #otp::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<script>
+// Auto-format OTP input
+document.getElementById('otp').addEventListener('input', function(e) {
+    // Remove non-numeric characters
+    this.value = this.value.replace(/[^0-9]/g, '');
+    
+    // Auto-submit when 6 digits are entered
+    if (this.value.length === 6) {
+        this.form.submit();
+    }
+});
+
+// Paste support
+document.getElementById('otp').addEventListener('paste', function(e) {
+    e.preventDefault();
+    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    const otpValue = pastedText.replace(/[^0-9]/g, '').substring(0, 6);
+    this.value = otpValue;
+    
+    if (otpValue.length === 6) {
+        this.form.submit();
+    }
+});
+</script>
+{% endblock %}
